@@ -10,6 +10,7 @@ import 'package:barter_it/models/items.dart';
 import 'package:barter_it/myconfig.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:http/http.dart' as http;
+import 'package:swipe_refresh/swipe_refresh.dart';
 
 class TradePage extends StatefulWidget {
   final User user;
@@ -123,56 +124,61 @@ class _TradePageState extends State<TradePage> {
                 ),
               ),
               Expanded(
-                  child: GridView.count(
-                      crossAxisCount: axiscount,
-                      children: List.generate(
-                        itemList.length,
-                        (index) {
-                          return Card(
-                            child: InkWell(
-                              onLongPress: () {
-                                onDeleteDialog(index);
-                              },
-                              onTap: () async {
-                                Item singleitem =
-                                    Item.fromJson(itemList[index].toJson());
-                                await Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (content) => EditItemScreen(
-                                              user: widget.user,
-                                              item: singleitem,
-                                            )));
-                                loadTradeItems();
-                              },
-                              child: Column(children: [
-                                CachedNetworkImage(
-                                  width: screenWidth,
-                                  fit: BoxFit.cover,
-                                  imageUrl:
-                                      "${MyConfig().server}/barter_it/assets/items/${itemList[index].itemId}.png",
-                                  placeholder: (context, url) =>
-                                      const LinearProgressIndicator(),
-                                  errorWidget: (context, url, error) =>
-                                      const Icon(Icons.error),
-                                ),
-                                Text(
-                                  itemList[index].itemName.toString(),
-                                  style: const TextStyle(fontSize: 20),
-                                ),
-                                Text(
-                                  "RM ${itemList[index].itemValue.toString()}",
-                                  style: const TextStyle(fontSize: 14),
-                                ),
-                                Text(
-                                  "${itemList[index].itemQty} available",
-                                  style: const TextStyle(fontSize: 14),
-                                ),
-                              ]),
-                            ),
-                          );
-                        },
-                      )))
+                  child: RefreshIndicator(
+                onRefresh: () {
+                  return Future.delayed(const Duration(seconds: 1), () {});
+                },
+                child: GridView.count(
+                    crossAxisCount: axiscount,
+                    children: List.generate(
+                      itemList.length,
+                      (index) {
+                        return Card(
+                          child: InkWell(
+                            onLongPress: () {
+                              onDeleteDialog(index);
+                            },
+                            onTap: () async {
+                              Item singleitem =
+                                  Item.fromJson(itemList[index].toJson());
+                              await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (content) => EditItemScreen(
+                                            user: widget.user,
+                                            item: singleitem,
+                                          )));
+                              loadTradeItems();
+                            },
+                            child: Column(children: [
+                              CachedNetworkImage(
+                                width: screenWidth,
+                                fit: BoxFit.cover,
+                                imageUrl:
+                                    "${MyConfig().server}/barter_it/assets/items/${itemList[index].itemId}.png",
+                                placeholder: (context, url) =>
+                                    const LinearProgressIndicator(),
+                                errorWidget: (context, url, error) =>
+                                    const Icon(Icons.error),
+                              ),
+                              Text(
+                                itemList[index].itemName.toString(),
+                                style: const TextStyle(fontSize: 20),
+                              ),
+                              Text(
+                                "RM ${itemList[index].itemValue.toString()}",
+                                style: const TextStyle(fontSize: 14),
+                              ),
+                              Text(
+                                "${itemList[index].itemQty} available",
+                                style: const TextStyle(fontSize: 14),
+                              ),
+                            ]),
+                          ),
+                        );
+                      },
+                    )),
+              ))
             ]),
     );
   }
