@@ -235,6 +235,7 @@ class _LoginScreenState extends State<LoginScreen> {
       await prefs.setString('password', password);
       await prefs.setBool("checkbox", value);
 
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content: Text("Preferences Stored"),
       ));

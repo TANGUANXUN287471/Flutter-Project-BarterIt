@@ -56,7 +56,7 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
               const SizedBox(height: 10),
               Text(widget.user.name.toString(),
-                  style: Theme.of(context).textTheme.headline5),
+                  style: Theme.of(context).textTheme.headlineSmall),
               Text(widget.user.email.toString()),
               Text("Phone: ${widget.user.phone.toString()}"),
               Text(widget.user.datereg.toString()),

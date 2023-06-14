@@ -125,7 +125,7 @@ class _TradePageState extends State<TradePage> {
               ),
               Expanded(
                   child: RefreshIndicator(
-                onRefresh: () {
+                onRefresh: () async {
                   return Future.delayed(const Duration(seconds: 1), () {});
                 },
                 child: GridView.count(
@@ -138,24 +138,15 @@ class _TradePageState extends State<TradePage> {
                             onLongPress: () {
                               onDeleteDialog(index);
                             },
-                            onTap: () async {
-                              Item singleitem =
-                                  Item.fromJson(itemList[index].toJson());
-                              await Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (content) => EditItemScreen(
-                                            user: widget.user,
-                                            item: singleitem,
-                                          )));
-                              loadTradeItems();
+                            onTap: () {
+                              _showDetails(index);
                             },
                             child: Column(children: [
                               CachedNetworkImage(
                                 width: screenWidth,
                                 fit: BoxFit.cover,
                                 imageUrl:
-                                    "${MyConfig().server}/barter_it/assets/items/${itemList[index].itemId}.png",
+                                    "${MyConfig().server}/barter_it/assets/items/${itemList[index].itemId}_1.png",
                                 placeholder: (context, url) =>
                                     const LinearProgressIndicator(),
                                 errorWidget: (context, url, error) =>
@@ -203,7 +194,7 @@ class _TradePageState extends State<TradePage> {
           extractdata['items'].forEach((v) {
             itemList.add(Item.fromJson(v));
           });
-          print(itemList[0].itemName);
+          debugPrint(itemList[0].itemName);
         }
         setState(() {});
       }
@@ -228,7 +219,7 @@ class _TradePageState extends State<TradePage> {
                 style: TextStyle(),
               ),
               onPressed: () {
-                deleteCatch(index);
+                deleteItem(index);
                 Navigator.of(context).pop();
               },
             ),
@@ -247,25 +238,150 @@ class _TradePageState extends State<TradePage> {
     );
   }
 
-  void deleteCatch(int index) {
+  void deleteItem(int index) {
     http.post(Uri.parse("${MyConfig().server}/barter_it/php/delete_item.php"),
         body: {
           "userid": widget.user.id,
           "itemid": itemList[index].itemId
-        }).then((response) {
-      print(response.body);
-      //itemList.clear();
-      if (response.statusCode == 200) {
-        var jsondata = jsonDecode(response.body);
-        if (jsondata['status'] == "success") {
-          ScaffoldMessenger.of(context)
-              .showSnackBar(const SnackBar(content: Text("Delete Success")));
-          loadTradeItems();
-        } else {
-          ScaffoldMessenger.of(context)
-              .showSnackBar(const SnackBar(content: Text("Failed")));
+        }).then(
+      (response) {
+        debugPrint(response.body);
+        //itemList.clear();
+        if (response.statusCode == 200) {
+          var jsondata = jsonDecode(response.body);
+          if (jsondata['status'] == "success") {
+            ScaffoldMessenger.of(context)
+                .showSnackBar(const SnackBar(content: Text("Delete Success")));
+            loadTradeItems();
+          } else {
+            ScaffoldMessenger.of(context)
+                .showSnackBar(const SnackBar(content: Text("Failed")));
+          }
         }
-      }
-    });
+      },
+    );
+  }
+
+  void _showDetails(index) {
+    showBottomSheet(
+      elevation: 20,
+      context: context,
+      builder: (BuildContext context) {
+        return SizedBox(
+          height: 550,
+          child: Column(
+            children: [
+              Align(
+                alignment: Alignment.centerRight,
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                  child: TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: const Text("Close")),
+                ),
+              ),
+              Expanded(
+                child: ListView(
+                  scrollDirection: Axis.horizontal,
+                  shrinkWrap: true,
+                  children: [
+                    const SizedBox(width: 10),
+                    Card(
+                      elevation: 8,
+                      child: CachedNetworkImage(
+                        imageUrl:
+                            "${MyConfig().server}/barter_it/assets/items/${itemList[index].itemId}_1.png",
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Card(
+                      elevation: 8,
+                      child: CachedNetworkImage(
+                        imageUrl:
+                            "${MyConfig().server}/barter_it/assets/items/${itemList[index].itemId}_2.png",
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Card(
+                      elevation: 8,
+                      child: CachedNetworkImage(
+                        imageUrl:
+                            "${MyConfig().server}/barter_it/assets/items/${itemList[index].itemId}_3.png",
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Card(
+                      elevation: 8,
+                      child: CachedNetworkImage(
+                        imageUrl:
+                            "${MyConfig().server}/barter_it/assets/items/${itemList[index].itemId}_4.png",
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                  ],
+                ),
+              ),
+              SingleChildScrollView(
+                child: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: const BoxDecoration(
+                      borderRadius: BorderRadius.all(
+                    Radius.circular(20),
+                  )),
+                  child: Card(
+                    elevation: 8,
+                    child: Column(
+                      children: [
+                        ListTile(
+                          leading: Text(itemList[index].itemName.toString(),
+                              style: const TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                                decoration: TextDecoration.none,
+                              )),
+                          title: Text("# ${itemList[index].itemQty.toString()}"),
+                        ),
+                        ListTile(
+                          leading: const Icon(Icons.attach_money),
+                          title: Text(
+                              "RM ${itemList[index].itemValue.toString()}"),
+                          contentPadding:
+                              const EdgeInsets.fromLTRB(16, 0, 4, 0),
+                          minVerticalPadding: 0,
+                        ),
+                        ListTile(
+                          leading: const Icon(Icons.type_specimen),
+                          title: Text(itemList[index].itemType.toString()),
+                          contentPadding:
+                              const EdgeInsets.fromLTRB(16, 0, 4, 0),
+                          minVerticalPadding: 0,
+                          subtitle: Text(itemList[index].itemDesc.toString()),
+                        ),
+                        ListTile(
+                          leading: const Icon(Icons.document_scanner),
+                          title: const Text("Conditions"),
+                          subtitle:
+                              Text(itemList[index].itemCondition.toString()),
+                        ),
+                        ListTile(
+                          leading: const Icon(Icons.pin_drop),
+                          title: const Text("Location"),
+                          subtitle: Text(
+                              "${itemList[index].itemState.toString()}, ${itemList[index].itemLocality.toString()}"),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 }

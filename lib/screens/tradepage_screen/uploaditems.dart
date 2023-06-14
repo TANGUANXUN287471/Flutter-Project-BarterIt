@@ -413,6 +413,7 @@ class _UploadItemsState extends State<UploadItems> {
   }
 
   Future<void> _cropImage(File image, int index) async {
+    // ignore: unnecessary_null_comparison
     if (image != null) {
       CroppedFile? cropped = await ImageCropper().cropImage(
         sourcePath: image.path,
