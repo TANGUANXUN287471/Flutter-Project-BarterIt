@@ -10,7 +10,7 @@ $pass = sha1($_POST['password']);
 
 include_once("dbconnect.php");
 
-$sqllogin = "SELECT * FROM `user_registration` WHERE user_email = '$email' AND user_password = '$pass'";
+$sqllogin = "SELECT * FROM `user_registration_table` WHERE user_email = '$email' AND user_password = '$pass'";
 $result = $conn->query($sqllogin);
 
 if ($result->num_rows > 0) {

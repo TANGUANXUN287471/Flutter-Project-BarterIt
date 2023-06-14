@@ -2,7 +2,7 @@
 $servername = "localhost";
 $username = "root";
 $password = "";
-$dbname = "barterit_db";
+$dbname = "barter_it_db";
 
 $conn = new mysqli($servername,$username,$password,$dbname);
 if($conn->connect_error){
