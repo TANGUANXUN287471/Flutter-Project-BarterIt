@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:developer';
-import 'package:barter_it/screens/tradepage_screen/edititems.dart';
 import 'package:barter_it/screens/tradepage_screen/myitems.dart';
 import 'package:barter_it/screens/tradepage_screen/uploaditems.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +9,6 @@ import 'package:barter_it/models/items.dart';
 import 'package:barter_it/myconfig.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:http/http.dart' as http;
-import 'package:swipe_refresh/swipe_refresh.dart';
 
 class TradePage extends StatefulWidget {
   final User user;
@@ -24,6 +22,7 @@ class _TradePageState extends State<TradePage> {
   late double screenHeight, screenWidth;
   late int axiscount = 2;
   late List<Widget> tabchildren;
+  String dialog = "No Data Available";
   String maintitle = "Seller";
   List<Item> itemList = <Item>[];
   @override
@@ -60,19 +59,7 @@ class _TradePageState extends State<TradePage> {
         curve: Curves.bounceIn,
         overlayColor: Colors.black,
         overlayOpacity: 0.5,
-        onOpen: () async {
-          /*if (widget.user.id != "N/A") {
-              await Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (content) => UploadItems(
-                            user: widget.user,
-                          )));
-              loadTradeItems();
-            } else {
-              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                  content: Text("Please login/register an account")));
-            }*/
+        onOpen: () {
           debugPrint('OPENING DIAL');
         },
         onClose: () {
@@ -88,10 +75,30 @@ class _TradePageState extends State<TradePage> {
             foregroundColor: Colors.white,
             label: 'Upload Items',
             labelStyle: const TextStyle(fontSize: 18.0),
-            onTap: () {
-              Navigator.of(context).push(MaterialPageRoute(
-                  builder: (BuildContext context) =>
-                      UploadItems(user: widget.user)));
+            onTap: () async {
+              if (widget.user.id != "N/A") {
+                await Navigator.of(context).push(MaterialPageRoute(
+                    builder: (BuildContext context) =>
+                        UploadItems(user: widget.user)));
+              } else {
+                ScaffoldMessenger.of(context).showMaterialBanner(
+                  MaterialBanner(
+                    padding: const EdgeInsets.all(15),
+                    content: const Text("Please Register/Login an Account"),
+                    leading: const Icon(Icons.warning_amber),
+                    elevation: 5,
+                    backgroundColor: Colors.grey[300],
+                    actions: [
+                      TextButton(
+                          onPressed: () {
+                            ScaffoldMessenger.of(context)
+                                .hideCurrentMaterialBanner();
+                          },
+                          child: const Text("Dismiss"))
+                    ],
+                  ),
+                );
+              }
             },
             onLongPress: () {},
           ),
@@ -110,8 +117,8 @@ class _TradePageState extends State<TradePage> {
         ],
       ),
       body: itemList.isEmpty
-          ? const Center(
-              child: Text("No Data"),
+          ? Center(
+              child: Text(dialog),
             )
           : Column(children: [
               Container(
@@ -133,38 +140,45 @@ class _TradePageState extends State<TradePage> {
                     children: List.generate(
                       itemList.length,
                       (index) {
-                        return Card(
-                          child: InkWell(
-                            onLongPress: () {
-                              onDeleteDialog(index);
-                            },
-                            onTap: () {
-                              _showDetails(index);
-                            },
-                            child: Column(children: [
-                              CachedNetworkImage(
-                                width: screenWidth,
-                                fit: BoxFit.cover,
-                                imageUrl:
-                                    "${MyConfig().server}/barter_it/assets/items/${itemList[index].itemId}_1.png",
-                                placeholder: (context, url) =>
-                                    const LinearProgressIndicator(),
-                                errorWidget: (context, url, error) =>
-                                    const Icon(Icons.error),
-                              ),
-                              Text(
-                                itemList[index].itemName.toString(),
-                                style: const TextStyle(fontSize: 20),
-                              ),
-                              Text(
-                                "RM ${itemList[index].itemValue.toString()}",
-                                style: const TextStyle(fontSize: 14),
-                              ),
-                              Text(
-                                "${itemList[index].itemQty} available",
-                                style: const TextStyle(fontSize: 14),
-                              ),
-                            ]),
+                        return GridTile(
+                          header:  GridTileBar(
+                            backgroundColor: Colors.black38,
+                            leading: const Icon(Icons.timer_sharp),
+                            title: Text("${itemList[index].itemDate}"),
+                          ),
+                          child: Card(
+                            child: InkWell(
+                              onLongPress: () {
+                                onDeleteDialog(index);
+                              },
+                              onTap: () {
+                                _showDetails(index);
+                              },
+                              child: Column(children: [
+                                CachedNetworkImage(
+                                  width: screenWidth,
+                                  fit: BoxFit.cover,
+                                  imageUrl:
+                                      "${MyConfig().server}/barter_it/assets/items/${itemList[index].itemId}_1.png",
+                                  placeholder: (context, url) =>
+                                      const LinearProgressIndicator(),
+                                  errorWidget: (context, url, error) =>
+                                      const Icon(Icons.error),
+                                ),
+                                Text(
+                                  itemList[index].itemName.toString(),
+                                  style: const TextStyle(fontSize: 20),
+                                ),
+                                Text(
+                                  "RM ${itemList[index].itemValue.toString()}",
+                                  style: const TextStyle(fontSize: 14),
+                                ),
+                                Text(
+                                  "${itemList[index].itemQty} available",
+                                  style: const TextStyle(fontSize: 14),
+                                ),
+                              ]),
+                            ),
                           ),
                         );
                       },
@@ -175,9 +189,10 @@ class _TradePageState extends State<TradePage> {
   }
 
   void loadTradeItems() {
-    if (widget.user.id == "na") {
+    if (widget.user.id == "N/A") {
       setState(() {
-        // titlecenter = "Unregistered User";
+        itemList.clear();
+        dialog = "Register/Login Account to Trade";
       });
       return;
     }
@@ -343,7 +358,8 @@ class _TradePageState extends State<TradePage> {
                                 fontWeight: FontWeight.bold,
                                 decoration: TextDecoration.none,
                               )),
-                          title: Text("# ${itemList[index].itemQty.toString()}"),
+                          title:
+                              Text("# ${itemList[index].itemQty.toString()}"),
                         ),
                         ListTile(
                           leading: const Icon(Icons.attach_money),

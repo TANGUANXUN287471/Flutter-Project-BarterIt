@@ -41,7 +41,7 @@ class Item {
     itemLong = json['item_long'];
     itemState = json['item_state'];
     itemLocality = json['item_locality'];
-    itemDate = json['item_date'];
+    itemDate = json['item_datereg'];
   }
 
   Map<String, dynamic> toJson() {
@@ -58,7 +58,7 @@ class Item {
     data['item_long'] = itemLong;
     data['item_state'] = itemState;
     data['item_locality'] = itemLocality;
-    data['item_date'] = itemDate;
+    data['item_datereg'] = itemDate;
     return data;
   }
 }
