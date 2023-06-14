@@ -81,7 +81,23 @@ class _SplashScreenState extends State<SplashScreen> {
             //debugPrint(response.body);
             //if (jsondata['status'] == 'success') {
             User user = User.fromJson(jsondata['data']);
-
+            /*}else {
+            user = User(
+              id: "N/A",
+              name: "N/A",
+              email: "N/A",
+              phone: "N/A",
+              password: "N/A",
+              datereg: "N/A",
+              otp: "N/A",
+            );
+            Timer(
+                const Duration(seconds: 3),
+                () => Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (content) => MainScreen(user: user))));
+          }*/
             Timer(
                 const Duration(seconds: 3),
                 () => Navigator.pushReplacement(

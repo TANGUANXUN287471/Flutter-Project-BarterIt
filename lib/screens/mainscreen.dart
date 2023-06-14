@@ -32,12 +32,31 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          mainTitles,
-          style: const TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.w700,
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(80.0),
+        child: Container(
+          height: 120,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: <Color>[
+                Colors.teal,
+                Colors.cyan.shade300,
+              ],
+            ),
+          ),
+          child: SafeArea(
+            child: Center(
+              child: ListTile(
+                title: Text(
+                  mainTitles,
+                  style: const TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                //trailing: const Icon(Icons.search),
+              ),
+            ),
           ),
         ),
       ),

@@ -20,10 +20,13 @@ class UploadItems extends StatefulWidget {
 
 class _UploadItemsState extends State<UploadItems> {
   File? _image;
+  File? _image2;
+  File? _image3;
+  File? _image4;
   var pathAsset = "assets/images/upload2.jpg";
+  var pathAsset2 = "assets/images/add.png";
   final _formKey = GlobalKey<FormState>();
   final ImagePicker imgpicker = ImagePicker();
-  List<XFile>? imagefiles;
 
   final TextEditingController _itemNameEditingController =
       TextEditingController();
@@ -100,7 +103,7 @@ class _UploadItemsState extends State<UploadItems> {
                   children: <Widget>[
                     GestureDetector(
                       onTap: () {
-                        _selectFromCamera();
+                        _selectAndCropImage(1);
                       },
                       child: Container(
                         width: 200,
@@ -117,38 +120,55 @@ class _UploadItemsState extends State<UploadItems> {
                     const SizedBox(width: 20),
                     GestureDetector(
                       onTap: () {
-                        setState(() {
-                          openImages();
-                        });
+                        _selectAndCropImage(2);
                       },
-                      child: Row(
-                        children: [
-                          const SizedBox(width: 20),
-                          Image.asset(
-                            "assets/images/add.png",
-                            height: 100,
-                            width: 100,
+                      child: Container(
+                        width: 200,
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            image: _image2 == null
+                                ? AssetImage(pathAsset)
+                                : FileImage(_image2!) as ImageProvider,
+                            fit: BoxFit.cover,
                           ),
-                          const SizedBox(width: 20),
-                          imagefiles != null
-                              ? Wrap(
-                                  children: imagefiles!.map(
-                                    (imageone) {
-                                      return Card(
-                                        child: Container(
-                                          height: 220,
-                                          width: 180,
-                                          child:
-                                              Image.file(File(imageone.path)),
-                                        ),
-                                      );
-                                    },
-                                  ).toList(),
-                                )
-                              : Container(),
-                        ],
+                        ),
                       ),
                     ),
+                    const SizedBox(width: 20),
+                    GestureDetector(
+                      onTap: () {
+                        _selectAndCropImage(3);
+                      },
+                      child: Container(
+                        width: 200,
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            image: _image3 == null
+                                ? AssetImage(pathAsset)
+                                : FileImage(_image3!) as ImageProvider,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 20),
+                    GestureDetector(
+                      onTap: () {
+                        _selectAndCropImage(4);
+                      },
+                      child: Container(
+                        width: 200,
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            image: _image4 == null
+                                ? AssetImage(pathAsset)
+                                : FileImage(_image4!) as ImageProvider,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 20),
                   ],
                 ),
               ),
@@ -376,22 +396,7 @@ class _UploadItemsState extends State<UploadItems> {
     );
   }
 
-  openImages() async {
-    try {
-      var pickedfiles = await imgpicker.pickMultiImage();
-
-      if (pickedfiles != null) {
-        imagefiles = pickedfiles;
-        setState(() {});
-      } else {
-        debugPrint("No image is selected.");
-      }
-    } catch (e) {
-      debugPrint("error while picking file.");
-    }
-  }
-
-  Future<void> _selectFromCamera() async {
+  Future<void> _selectAndCropImage(int index) async {
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(
       source: ImageSource.gallery,
@@ -400,34 +405,51 @@ class _UploadItemsState extends State<UploadItems> {
     );
 
     if (pickedFile != null) {
-      _image = File(pickedFile.path);
-      _cropImage();
+      File image = File(pickedFile.path);
+      await _cropImage(image, index);
     } else {
       debugPrint('No image selected.');
     }
   }
 
-  Future _cropImage() async {
-    if (_image != null) {
-      CroppedFile? cropped = await ImageCropper()
-          .cropImage(sourcePath: _image!.path, aspectRatioPresets: [
-        CropAspectRatioPreset.square,
-        CropAspectRatioPreset.ratio3x2,
-        CropAspectRatioPreset.original,
-        CropAspectRatioPreset.ratio4x3,
-        CropAspectRatioPreset.ratio16x9
-      ], uiSettings: [
-        AndroidUiSettings(
+  Future<void> _cropImage(File image, int index) async {
+    if (image != null) {
+      CroppedFile? cropped = await ImageCropper().cropImage(
+        sourcePath: image.path,
+        aspectRatioPresets: [
+          CropAspectRatioPreset.square,
+          CropAspectRatioPreset.ratio3x2,
+          CropAspectRatioPreset.original,
+          CropAspectRatioPreset.ratio4x3,
+          CropAspectRatioPreset.ratio16x9,
+        ],
+        uiSettings: [
+          AndroidUiSettings(
             toolbarTitle: 'Crop',
             cropGridColor: Colors.black,
             initAspectRatio: CropAspectRatioPreset.original,
-            lockAspectRatio: false),
-        IOSUiSettings(title: 'Crop')
-      ]);
+            lockAspectRatio: false,
+          ),
+          IOSUiSettings(title: 'Crop'),
+        ],
+      );
 
       if (cropped != null) {
         setState(() {
-          _image = File(cropped.path);
+          switch (index) {
+            case 1:
+              _image = File(cropped.path);
+              break;
+            case 2:
+              _image2 = File(cropped.path);
+              break;
+            case 3:
+              _image3 = File(cropped.path);
+              break;
+            case 4:
+              _image4 = File(cropped.path);
+              break;
+          }
         });
       }
     }
@@ -489,6 +511,9 @@ class _UploadItemsState extends State<UploadItems> {
     String state = _stateEditingController.text;
     String locality = _localEditingController.text;
     String base64Image = base64Encode(_image!.readAsBytesSync());
+    String base64Image2 = base64Encode(_image2!.readAsBytesSync());
+    String base64Image3 = base64Encode(_image3!.readAsBytesSync());
+    String base64Image4 = base64Encode(_image4!.readAsBytesSync());
 
     http.post(Uri.parse("${MyConfig().server}/barter_it/php/upload_item.php"),
         body: {
@@ -503,7 +528,10 @@ class _UploadItemsState extends State<UploadItems> {
           "longitude": prlong,
           "state": state,
           "locality": locality,
-          "image": base64Image
+          "image": base64Image,
+          "image2": base64Image2,
+          "image3": base64Image3,
+          "image4": base64Image4,
         }).then((response) {
       debugPrint(response.body);
       if (response.statusCode == 200) {
