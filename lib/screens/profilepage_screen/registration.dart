@@ -25,9 +25,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
         title: const Text("User Registration"),
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.white60,
         foregroundColor: Colors.black,
         elevation: 0,
       ),

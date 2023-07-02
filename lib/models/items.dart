@@ -52,7 +52,7 @@ class Item {
     data['item_type'] = itemType;
     data['item_condition'] = itemCondition;
     data['item_desc'] = itemDesc;
-    data['item_Value'] = itemValue;
+    data['item_value'] = itemValue;
     data['item_qty'] = itemQty;
     data['item_lat'] = itemLat;
     data['item_long'] = itemLong;

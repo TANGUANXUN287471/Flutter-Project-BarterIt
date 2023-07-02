@@ -46,6 +46,7 @@ class _TradePageState extends State<TradePage> {
       axiscount = 2;
     }
     return Scaffold(
+      extendBodyBehindAppBar: true,
       floatingActionButton: SpeedDial(
         icon: Icons.menu,
         activeIcon: Icons.close,
@@ -110,7 +111,7 @@ class _TradePageState extends State<TradePage> {
             labelStyle: const TextStyle(fontSize: 18.0),
             onTap: () {
               Navigator.of(context).push(MaterialPageRoute(
-                  builder: (BuildContext context) => const MyItems()));
+                  builder: (BuildContext context) => MyItems(user: widget.user)));
             },
             onLongPress: () {},
           ),
@@ -123,7 +124,7 @@ class _TradePageState extends State<TradePage> {
           : Column(children: [
               Container(
                 height: 24,
-                color: Theme.of(context).colorScheme.primary,
+                color: Colors.blueGrey,
                 alignment: Alignment.center,
                 child: Text(
                   "${itemList.length} Items Found",
@@ -141,8 +142,8 @@ class _TradePageState extends State<TradePage> {
                       itemList.length,
                       (index) {
                         return GridTile(
-                          header:  GridTileBar(
-                            backgroundColor: Colors.black38,
+                          header: GridTileBar(
+                            backgroundColor: Colors.black26,
                             leading: const Icon(Icons.timer_sharp),
                             title: Text("${itemList[index].itemDate}"),
                           ),
@@ -198,7 +199,9 @@ class _TradePageState extends State<TradePage> {
     }
 
     http.post(Uri.parse("${MyConfig().server}/barter_it/php/load_items.php"),
-        body: {"userid": widget.user.id}).then((response) {
+        body: {
+          "userid": widget.user.id.toString(),
+        }).then((response) {
       //print(response.body);
       log(response.body);
       itemList.clear();
@@ -359,7 +362,7 @@ class _TradePageState extends State<TradePage> {
                                 decoration: TextDecoration.none,
                               )),
                           title:
-                              Text("# ${itemList[index].itemQty.toString()}"),
+                              Text("# ${itemList[index].itemQty.toString()} available"),
                         ),
                         ListTile(
                           leading: const Icon(Icons.attach_money),

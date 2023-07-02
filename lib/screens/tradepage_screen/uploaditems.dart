@@ -208,7 +208,7 @@ class _UploadItemsState extends State<UploadItems> {
                             ),
                             child: Padding(
                               padding:
-                                  const EdgeInsets.only(left: 30, right: 30),
+                                  const EdgeInsets.only(left: 25, right: 25),
                               child: DropdownButton(
                                 value: selectedType,
                                 items: itemsList.map((selectedType) {
@@ -539,17 +539,17 @@ class _UploadItemsState extends State<UploadItems> {
         var jsondata = jsonDecode(response.body);
         if (jsondata['status'] == 'success') {
           ScaffoldMessenger.of(context)
-              .showSnackBar(const SnackBar(content: Text("Upload Success")));
+              .showSnackBar( const SnackBar(content: Text("Upload Success")));
         } else {
           ScaffoldMessenger.of(context)
-              .showSnackBar(const SnackBar(content: Text("Upload Failed")));
+              .showSnackBar( const SnackBar(content: Text("Upload Failed")));
         }
         setState(() {
           Navigator.pop(context);
         });
       } else {
         ScaffoldMessenger.of(context)
-            .showSnackBar(const SnackBar(content: Text("Upload Failed")));
+            .showSnackBar( const SnackBar(content: Text("Upload Failed")));
         Navigator.pop(context);
       }
     });
