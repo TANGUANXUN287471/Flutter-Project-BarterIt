@@ -79,7 +79,7 @@ class _TradePageState extends State<TradePage> {
             onTap: () async {
               if (widget.user.id != "N/A") {
                 await Navigator.of(context).push(MaterialPageRoute(
-                    builder: (BuildContext context) =>
+                    builder: (BuildContext contjext) =>
                         UploadItems(user: widget.user)));
               } else {
                 ScaffoldMessenger.of(context).showMaterialBanner(
