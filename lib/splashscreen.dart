@@ -79,25 +79,26 @@ class _SplashScreenState extends State<SplashScreen> {
           if (response.statusCode == 200) {
             var jsondata = jsonDecode(response.body);
             //debugPrint(response.body);
-            //if (jsondata['status'] == 'success') {
+            //if (jsondata['status'] == 'success') {        //if login without user failed remove
             User user = User.fromJson(jsondata['data']);
-            /*}else {
-            user = User(
-              id: "N/A",
-              name: "N/A",
-              email: "N/A",
-              phone: "N/A",
-              password: "N/A",
-              datereg: "N/A",
-              otp: "N/A",
-            );
-            Timer(
-                const Duration(seconds: 3),
-                () => Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                        builder: (content) => MainScreen(user: user))));
-          }*/
+          //   }else {
+          //   user = User(
+          //     id: "N/A",
+          //     name: "N/A",
+          //     email: "N/A",
+          //     phone: "N/A",
+          //     password: "N/A",
+          //     credit: "N/A",
+          //     datereg: "N/A",
+          //     otp: "N/A",
+          //   );
+          //   Timer(
+          //       const Duration(seconds: 3),
+          //       () => Navigator.pushReplacement(
+          //           context,
+          //           MaterialPageRoute(
+          //               builder: (content) => MainScreen(user: user))));
+          // }
             Timer(
                 const Duration(seconds: 3),
                 () => Navigator.pushReplacement(
@@ -111,6 +112,7 @@ class _SplashScreenState extends State<SplashScreen> {
               email: "N/A",
               phone: "N/A",
               password: "N/A",
+              credit: "N/A",
               datereg: "N/A",
               otp: "N/A",
             );
@@ -132,6 +134,7 @@ class _SplashScreenState extends State<SplashScreen> {
         email: "N/A",
         phone: "N/A",
         password: "N/A",
+        credit: "N/A",
         datereg: "N/A",
         otp: "N/A",
       );

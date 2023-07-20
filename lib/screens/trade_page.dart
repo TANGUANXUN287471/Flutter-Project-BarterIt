@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'package:barter_it/screens/tradepage_screen/myitems.dart';
+import 'package:barter_it/screens/tradepage_screen/mypropose.dart';
+import 'package:barter_it/screens/tradepage_screen/proposereceived.dart';
 import 'package:barter_it/screens/tradepage_screen/uploaditems.dart';
 import 'package:flutter/material.dart';
 import 'package:barter_it/models/user.dart';
@@ -29,11 +31,6 @@ class _TradePageState extends State<TradePage> {
   void initState() {
     super.initState();
     loadTradeItems();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
   }
 
   @override
@@ -111,7 +108,34 @@ class _TradePageState extends State<TradePage> {
             labelStyle: const TextStyle(fontSize: 18.0),
             onTap: () {
               Navigator.of(context).push(MaterialPageRoute(
-                  builder: (BuildContext context) => MyItems(user: widget.user)));
+                  builder: (BuildContext context) =>
+                      MyItems(user: widget.user)));
+            },
+            onLongPress: () {},
+          ),
+          SpeedDialChild(
+            child: const Icon(Icons.post_add_rounded),
+            backgroundColor: Colors.yellow[700],
+            foregroundColor: Colors.white,
+            label: 'My Propose',
+            labelStyle: const TextStyle(fontSize: 18.0),
+            onTap: () {
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (BuildContext context) =>
+                      MyPropose(user: widget.user)));
+            },
+            onLongPress: () {},
+          ),
+          SpeedDialChild(
+            child: const Icon(Icons.receipt_long_outlined),
+            backgroundColor: Colors.green[700],
+            foregroundColor: Colors.white,
+            label: 'Propose Received',
+            labelStyle: const TextStyle(fontSize: 18.0),
+            onTap: () {
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (BuildContext context) =>
+                      ProposeReceived(user: widget.user)));
             },
             onLongPress: () {},
           ),
@@ -134,6 +158,7 @@ class _TradePageState extends State<TradePage> {
               Expanded(
                   child: RefreshIndicator(
                 onRefresh: () async {
+                  loadTradeItems();
                   return Future.delayed(const Duration(seconds: 1), () {});
                 },
                 child: GridView.count(
@@ -361,8 +386,8 @@ class _TradePageState extends State<TradePage> {
                                 fontWeight: FontWeight.bold,
                                 decoration: TextDecoration.none,
                               )),
-                          title:
-                              Text("# ${itemList[index].itemQty.toString()} available"),
+                          title: Text(
+                              "# ${itemList[index].itemQty.toString()} available"),
                         ),
                         ListTile(
                           leading: const Icon(Icons.attach_money),

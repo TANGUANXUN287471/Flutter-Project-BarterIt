@@ -35,33 +35,34 @@ class _MyItemsState extends State<MyItems> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text("Manage My Items"),
-        ),
-        body: listItems.isEmpty
-            ? Center(
-                child: Text(dialog),
-              )
-            : ListView.separated(
-                itemBuilder: (BuildContext context, int index) {
-                  return ListTile(
-                    minVerticalPadding: 18,
-                    leading: CachedNetworkImage(
-                        imageUrl:
-                            "${MyConfig().server}/barter_it/assets/items/${listItems[index].itemId}_1.png"),
-                    title: Text("${listItems[index].itemName}"),
-                    subtitle: Text("${listItems[index].itemDesc}"),
-                    trailing: IconButton(
-                      icon: const Icon(Icons.edit, color: Colors.cyan),
-                      onPressed: () {
-                        _showDetails(index);
-                      },
-                    ),
-                  );
-                },
-                separatorBuilder: (BuildContext context, int index) =>
-                    const Divider(),
-                itemCount: listItems.length));
+      appBar: AppBar(
+        title: const Text("Manage My Items"),
+      ),
+      body: listItems.isEmpty
+          ? Center(
+              child: Text(dialog),
+            )
+          : ListView.separated(
+              itemBuilder: (BuildContext context, int index) {
+                return ListTile(
+                  minVerticalPadding: 18,
+                  leading: CachedNetworkImage(
+                      imageUrl:
+                          "${MyConfig().server}/barter_it/assets/items/${listItems[index].itemId}_1.png"),
+                  title: Text("${listItems[index].itemName}"),
+                  subtitle: Text("${listItems[index].itemDesc}"),
+                  trailing: IconButton(
+                    icon: const Icon(Icons.edit, color: Colors.cyan),
+                    onPressed: () {
+                      _showDetails(index);
+                    },
+                  ),
+                );
+              },
+              separatorBuilder: (BuildContext context, int index) =>
+                  const Divider(),
+              itemCount: listItems.length),
+    );
   }
 
   void loadItems() {

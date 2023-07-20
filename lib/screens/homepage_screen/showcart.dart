@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:barter_it/screens/homepage_screen/cartpropose.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -51,14 +52,18 @@ class _ShowCartState extends State<ShowCart> {
                           int.parse(cartList[index].itemQty.toString());
 
                       return ListTile(
-                        leading: CachedNetworkImage(
-                          imageUrl:
-                              "${MyConfig().server}/barter_it/assets/items/${cartList[index].itemId}_1.png",
-                          fit: BoxFit.cover,
-                          placeholder: (context, url) =>
-                              const LinearProgressIndicator(),
-                          errorWidget: (context, url, error) =>
-                              const Icon(Icons.error),
+                        leading: SizedBox(
+                          height: 150,
+                          width: 100,
+                          child: CachedNetworkImage(
+                            imageUrl:
+                                "${MyConfig().server}/barter_it/assets/items/${cartList[index].itemId}_1.png",
+                            fit: BoxFit.cover,
+                            placeholder: (context, url) =>
+                                const LinearProgressIndicator(),
+                            errorWidget: (context, url, error) =>
+                                const Icon(Icons.error),
+                          ),
                         ),
                         title: Text("${cartList[index].itemName}"),
                         subtitle: Column(
@@ -125,12 +130,14 @@ class _ShowCartState extends State<ShowCart> {
                         ),
                         trailing: IconButton(
                           icon: const Icon(Icons.delete, color: Colors.cyan),
-                          onPressed: () {},
+                          onPressed: () {
+                            _deleteCart(index);
+                          },
                         ),
                       );
                     },
                     itemCount: cartList.length,
-                    separatorBuilder: (context, index) => const Divider(),
+                    separatorBuilder: (context, index) =>  const Divider(color: Colors.black26),
                   ),
                 ),
           Stack(
@@ -138,8 +145,8 @@ class _ShowCartState extends State<ShowCart> {
               Card(
                 elevation: 12,
                 shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.vertical(
-                        top: Radius.elliptical(16, 12))),
+                    borderRadius:
+                        BorderRadius.vertical(top: Radius.elliptical(16, 12))),
                 child: Container(
                   decoration: BoxDecoration(
                       border: Border.all(color: Colors.black12),
@@ -171,7 +178,12 @@ class _ShowCartState extends State<ShowCart> {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.of(context).pushReplacement(
+                                MaterialPageRoute(
+                                    builder: (BuildContext context) =>
+                                        ProposeTradeCart(user: widget.user)));
+                          },
                           child: const Text(
                             "Propose Trade",
                             style: TextStyle(fontWeight: FontWeight.bold),
@@ -258,5 +270,59 @@ class _ShowCartState extends State<ShowCart> {
     setState(() {
       loadcart();
     });
+  }
+
+  void _deleteCart(int index) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(10.0))),
+            title: const Text(
+              "Remove from Cart?",
+              style: TextStyle(),
+            ),
+            content: const Text("Confirm to remove", style: TextStyle()),
+            actions: <Widget>[
+              TextButton(
+                child: const Text(
+                  "Yes",
+                  style: TextStyle(),
+                ),
+                onPressed: () {
+                  http.post(
+                      Uri.parse(
+                          "${MyConfig().server}//barter_it/php/delete_cart.php"),
+                      body: {
+                        "userid": widget.user.id,
+                        "cartid": cartList[index].cartId,
+                      }).then((response) {
+                    if (response.statusCode == 200) {
+                      var jsondata = jsonDecode(response.body);
+                      if (jsondata['status'] == 'success') {}
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text("Failed")));
+                    }
+                  });
+                  setState(() {
+                    loadcart();
+                  });
+                  Navigator.of(context).pop();
+                },
+              ),
+              TextButton(
+                child: const Text(
+                  "No",
+                  style: TextStyle(),
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        });
   }
 }

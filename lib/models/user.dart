@@ -4,6 +4,7 @@ class User {
   String? name;
   String? phone;
   String? password;
+  String? credit;
   String? otp;
   String? datereg;
 
@@ -13,6 +14,7 @@ class User {
       this.name,
       this.phone,
       this.password,
+      this.credit,
       this.otp,
       this.datereg});
 
@@ -22,6 +24,7 @@ class User {
     name = json['name'];
     phone = json['phone'];
     password = json['password'];
+    credit = json['credit'];
     otp = json['otp'];
     datereg = json['datereg'];
   }
@@ -33,6 +36,7 @@ class User {
     data['name'] = name;
     data['phone'] = phone;
     data['password'] = password;
+    data['credit'] = credit;
     data['otp'] = otp;
     data['datereg'] = datereg;
     return data;

@@ -34,11 +34,6 @@ class _HomePageState extends State<HomePage> {
   }
 
   @override
-  void dispose() {
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     screenHeight = MediaQuery.of(context).size.height;
     screenWidth = MediaQuery.of(context).size.width;
@@ -154,7 +149,7 @@ class _HomePageState extends State<HomePage> {
                                     style: const TextStyle(fontSize: 14),
                                   ),
                                   Text(
-                                    "${itemList[index].itemQty} available",
+                                    "# ${itemList[index].itemQty} available",
                                     style: const TextStyle(fontSize: 14),
                                   ),
                                 ]),
@@ -166,16 +161,15 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                 ),
-                SizedBox(
-                    height: 50,
+                Container(
+                    color: Colors.transparent,
+                    height: 40,
                     child: ListView.builder(
                         shrinkWrap: true,
                         itemCount: numofpage,
                         scrollDirection: Axis.horizontal,
                         itemBuilder: (context, index) {
-                          //build the list for textbutton with scroll
                           if ((curpage - 1) == index) {
-                            //set current page number active
                             color = Colors.red;
                           } else {
                             color = Colors.black;
@@ -207,7 +201,7 @@ class _HomePageState extends State<HomePage> {
       if (response.statusCode == 200) {
         var jsondata = jsonDecode(response.body);
         if (jsondata['status'] == "success") {
-          numofpage = int.parse(jsondata['numofpage']); //get number of pages
+          numofpage = int.parse(jsondata['numofpage']); 
           numberofresult = int.parse(jsondata['numberofresult']);
 
           var extractdata = jsondata['data'];

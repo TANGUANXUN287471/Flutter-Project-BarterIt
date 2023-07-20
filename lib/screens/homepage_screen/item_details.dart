@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:barter_it/screens/homepage_screen/propose_trade.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:barter_it/models/user.dart';
@@ -219,7 +220,7 @@ class _ItemDetailsState extends State<ItemDetails> {
                                             content:
                                                 Text("Please add the amount")));
                                   } else {
-                                    addtocartdialog();
+                                    proposeTradeDialog();
                                   }
                                 },
                                 child: const Text("Propose Trade")),
@@ -307,5 +308,60 @@ class _ItemDetailsState extends State<ItemDetails> {
         Navigator.pop(context);
       }
     });
+  }
+
+  void proposeTradeDialog() {
+    if (widget.user.id.toString() == widget.itemIndex.userId.toString()) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("User cannot trade own item")));
+      return;
+    }
+    if (widget.user.id == "N/A") {
+      setState(() {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Login / Register Account to Trade")));
+      });
+      return;
+    }
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(10.0))),
+          title: const Text(
+            "Propose Trade?",
+            style: TextStyle(),
+          ),
+          content: const Text("Confirm to proceed", style: TextStyle()),
+          actions: <Widget>[
+            TextButton(
+              child: const Text(
+                "Yes",
+                style: TextStyle(),
+              ),
+              onPressed: () {
+                Navigator.of(context).pushReplacement(MaterialPageRoute(
+                    builder: (content) => ProposeTrade(
+                          user: widget.user,
+                          itemIndex: widget.itemIndex,
+                          total: total,
+                          num: num,
+                        )));
+              },
+            ),
+            TextButton(
+              child: const Text(
+                "No",
+                style: TextStyle(),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 }
