@@ -21,6 +21,7 @@ if ($result->num_rows > 0) {
 		$userarray['name'] = $row['user_name'];
 		$userarray['phone'] = $row['user_phone'];
 		$userarray['password'] = $_POST['password'];
+		$userarray['credit'] = $row['user_credit'];
 		$userarray['otp'] = $row['user_otp'];
 		$userarray['datereg'] = $row['user_datereg'];
 		$response = array('status' => 'success', 'data' => $userarray);
